@@ -10,30 +10,44 @@ const Login = () => {
   const [error, setError] = useState(null);
   const {login} = useAuth();
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
+
   try {
-    const response = await axios.post("https://employee-server-kohl-one.vercel.app/api/auth/login", {
-      email,
-      password,
-    });
+    const response = await axios.post(
+      "https://employee-server-kohl-one.vercel.app/api/auth/login",
+      {
+        email,
+        password,
+      }
+    );
 
     if (response.data.success) {
-      localStorage.setItem("token", response.data.token); 
-      if (response.data.user.role === 'admin') {
-        navigate('/admin-dashboard');
+      const { token, user } = response.data;
+
+      // Save token & role
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", user.role);
+
+      // Update context (optional)
+      if (login) login(user);
+
+      // Redirect by role
+      if (user.role === "admin") {
+        navigate("/admin-dashboard");
       } else {
-        navigate('/employee-dashboard');
+        navigate("/employee-dashboard");
       }
     }
   } catch (error) {
-    if (error.response && error.response.data && !error.response.data.success) {
+    if (error.response?.data?.error) {
       setError(error.response.data.error);
     } else {
       setError("Server error. Please try again later.");
     }
   }
 };
+
   return (
     <div className='flex flex-col items-center h-screen justify-center 
     bg-linear-to-b from-teal-600 from-50% to-gray-100 to-50% space-y-6'>
