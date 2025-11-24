@@ -1,59 +1,66 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useEffect,useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import DataTable from "react-data-table-component";
-import { columns, EmployeeButtons } from '../../utils/EmployeeHelper';
+import { columns, EmployeeButtons } from "../../utils/EmployeeHelper";
 const List = () => {
-  const [employees, setEmployees] = useState([])
+  const [employees, setEmployees] = useState([]);
   const [empLoading, setEmpLoading] = useState(false);
-  const [filteredEmployee, setFilteredEmployee] = useState([])
+  const [filteredEmployee, setFilteredEmployee] = useState([]);
 
-   useEffect(()=>{
+  useEffect(() => {
     const fetchEmployees = async () => {
-      setEmpLoading(true)
+      setEmpLoading(true);
       try {
-        const response = await axios.get('https://employee-server-kohl-one.vercel.app/api/employee',{
-          headers: {
-            "Authorization" : `Bearer ${localStorage.getItem('token')}`,
-          },
-        })
-        if(response.data.success) {
+        const response = await axios.get(
+          "https://employee-server-kohl-one.vercel.app/api/employee",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (response.data.success) {
           console.log("Fetched employees:", response.data.employees);
           let sno = 1;
-             const data = await response.data.employees.map((emp) =>(
-              {
-                _id: emp._id,
-                sno: sno++, 
-                dep_name: emp.department.dep_name,
-                name: emp.userId.name,
-                dob: new Date(emp.dob).toLocaleDateString(),
-                profileImage: <img width={40} className='rounded-full' src={`https://employee-server-kohl-one.vercel.app/${emp.userId.profileImage}`}/> ,
-                action: (<EmployeeButtons _id={emp._id}/>)
-              }
-            ))
-            setEmployees(data);
-            setFilteredEmployee(data)
+          const data = response.data.employees.map((emp, index) => ({
+            _id: emp._id,
+            sno: index + 1,
+            dep_name: emp.department?.dep_name || "",
+            name: emp.userId?.name || "",
+            dob: new Date(emp.dob).toLocaleDateString(),
+            profileImage: (
+              <img
+                width={40}
+                className="rounded-full"
+                src={emp.userId?.profileImage || ""}
+              />
+            ),
+            action: <EmployeeButtons _id={emp._id} />,
+          }));
+          setEmployees(data);
+          setFilteredEmployee(data);
         }
-      } catch(error){
-          if (error.response && error.response.data.error) {
-             alert(error.response.data.error);
-          }
+      } catch (error) {
+        if (error.response && error.response.data.error) {
+          alert(error.response.data.error);
+        }
       } finally {
-        setEmpLoading(false)
+        setEmpLoading(false);
       }
     };
     fetchEmployees();
-  },[]);
+  }, []);
 
   const handleFilter = (e) => {
-    const records = employees.filter((emp) => (
+    const records = employees.filter((emp) =>
       emp.name.toLowerCase().includes(e.target.value.toLowerCase())
-    ))
-    setFilteredEmployee(records)
-  }
+    );
+    setFilteredEmployee(records);
+  };
   return (
-    <div className='p-6'>
+    <div className="p-6">
       <div className="text-center">
         <h3 className="text-2xl font-bold">Manage Employee</h3>
       </div>
@@ -71,11 +78,11 @@ const List = () => {
           Add New Employee
         </Link>
       </div>
-      <div className='mt-6'>
-        <DataTable columns={columns} data={filteredEmployee} pagination/>
+      <div className="mt-6">
+        <DataTable columns={columns} data={filteredEmployee} pagination />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default List
+export default List;
