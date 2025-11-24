@@ -3,35 +3,3 @@
     font-family: "Comfortaa", sans-serif;
 }
 
-/* Responsive base styles */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Comfortaa', sans-serif;
-  background: #f8fafc;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-/* Example media queries for mobile */
-@media (max-width: 768px) {
-  .container {
-    padding: 0.5rem;
-  }
-  .EWS-head {
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0.25rem;
-  }
-  .EWS-head {
-    font-size: 1rem;
-  }
-}
