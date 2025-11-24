@@ -34,7 +34,7 @@ const List = () => {
               <img
                 width={40}
                 className="rounded-full"
-                src={`https://employee-server-kohl-one.vercel.app/${emp.userId?.profileImage}`}
+                src={emp.userId?.profileImage || ""}
               />
             ),
             action: <EmployeeButtons _id={emp._id} />,
